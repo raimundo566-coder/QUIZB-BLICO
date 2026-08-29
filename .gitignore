@@ -23,6 +23,7 @@ target/
 .sts4-cache
 
 dados/progresso.json
+dados/usuario.json
 dados/progresso_teste.json
 
 ### NetBeans ###
