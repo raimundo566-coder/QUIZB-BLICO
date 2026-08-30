@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,14 +20,15 @@ class BancoDePerguntasTest {
     @BeforeEach
     void montarAcervo() {
         List<Pergunta> perguntas = new ArrayList<>();
+        // de proposito fora de ordem: Mateus e Exodo antes de Genesis
+        perguntas.add(pergunta(8, 1, "NT", "Mateus"));
+        perguntas.add(pergunta(6, 1, "AT", "Êxodo"));
+        perguntas.add(pergunta(7, 1, "AT", "Êxodo"));
         perguntas.add(pergunta(1, 1, "AT", "Gênesis"));
         perguntas.add(pergunta(2, 1, "AT", "Gênesis"));
         perguntas.add(pergunta(3, 1, "AT", "Gênesis"));
         perguntas.add(pergunta(4, 2, "AT", "Gênesis"));
         perguntas.add(pergunta(5, 2, "AT", "Gênesis"));
-        perguntas.add(pergunta(6, 1, "AT", "Êxodo"));
-        perguntas.add(pergunta(7, 1, "AT", "Êxodo"));
-        perguntas.add(pergunta(8, 1, "NT", "Mateus"));
 
         banco = new BancoDePerguntas(perguntas);
     }
@@ -55,12 +55,20 @@ class BancoDePerguntasTest {
     @Test
     @DisplayName("livrosDisponiveis lista cada livro uma vez so")
     void livrosDisponiveisSemRepetir() {
-        Set<String> livros = banco.livrosDisponiveis();
+        List<String> livros = banco.livrosDisponiveis();
 
         assertEquals(3, livros.size());
         assertTrue(livros.contains("Gênesis"));
         assertTrue(livros.contains("Êxodo"));
         assertTrue(livros.contains("Mateus"));
+    }
+
+    @Test
+    @DisplayName("livrosDisponiveis respeita a ordem biblica, nao a ordem de insercao")
+    void livrosDisponiveisRespeitaOrdemCanonica() {
+        List<String> livros = banco.livrosDisponiveis();
+
+        assertEquals(List.of("Gênesis", "Êxodo", "Mateus"), livros);
     }
 
     @Test
