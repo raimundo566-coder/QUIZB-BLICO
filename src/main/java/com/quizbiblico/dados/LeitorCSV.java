@@ -47,7 +47,13 @@ public class LeitorCSV {
             while ((linha = leitor.readNext()) != null) {
                 numeroDaLinha++;
                 if (primeira) { primeira = false; continue; }
-                if (linha.length < COLUNAS_MINIMAS) { continue; }
+
+                if (linha.length < COLUNAS_MINIMAS) {
+                    System.out.println("  >> Aviso: linha " + numeroDaLinha + " de " + caminho
+                            + " tem " + linha.length + " coluna(s), esperava pelo menos " + COLUNAS_MINIMAS
+                            + ". Pulando essa linha.");
+                    continue;
+                }
 
                 try {
                     perguntas.add(montar(linha));
