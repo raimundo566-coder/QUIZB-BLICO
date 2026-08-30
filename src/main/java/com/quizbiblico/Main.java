@@ -26,13 +26,23 @@ public class Main {
             List<Pergunta> perguntas = leitor.carregarPasta("dados");
             BancoDePerguntas banco = new BancoDePerguntas(perguntas);
 
-            // 2. progresso salvo
+            // 2. progresso e usuario salvos
             PersistenciaProgresso arquivistaProgresso = new PersistenciaProgresso();
             Progresso progresso = arquivistaProgresso.carregar();
 
-            // 3. usuario salvo
             PersistenciaUsuario arquivistaUsuario = new PersistenciaUsuario();
             Usuario usuario = arquivistaUsuario.carregar();
+
+            // 3. rede de seguranca: salva mesmo se o programa for fechado
+            // no X da janela ou com Ctrl+C, nao so quando o menu termina normal
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    arquivistaProgresso.salvar(progresso);
+                    arquivistaUsuario.salvar(usuario);
+                } catch (IOException e) {
+                    System.out.println("Nao consegui salvar ao fechar: " + e.getMessage());
+                }
+            }));
 
             // 4. regras
             SoloService solo = new SoloService(banco, progresso, usuario);
@@ -47,7 +57,7 @@ public class Main {
             // 6. roda o app
             menu.abrir();
 
-            // 7. salva ao sair
+            // 7. salva no caminho normal de saida
             arquivistaProgresso.salvar(progresso);
             arquivistaUsuario.salvar(usuario);
             System.out.println();

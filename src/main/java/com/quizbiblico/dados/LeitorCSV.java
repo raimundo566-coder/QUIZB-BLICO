@@ -30,7 +30,7 @@ public class LeitorCSV {
     private static final int COL_ALT_C = 13;
     private static final int COL_ALT_D = 14;
     private static final int COL_RESPOSTA = 15;
-    private static final int TOTAL_COLUNAS = 22;
+    private static final int COLUNAS_MINIMAS = COL_RESPOSTA + 1;
 
     public List<Pergunta> carregar(String caminho) throws IOException {
         List<Pergunta> perguntas = new ArrayList<>();
@@ -43,10 +43,18 @@ public class LeitorCSV {
              CSVReader leitor = new CSVReaderBuilder(br).withCSVParser(parser).build()) {
             String[] linha;
             boolean primeira = true;
+            int numeroDaLinha = 0;
             while ((linha = leitor.readNext()) != null) {
+                numeroDaLinha++;
                 if (primeira) { primeira = false; continue; }
-                if (linha.length < TOTAL_COLUNAS) { continue; }
-                perguntas.add(montar(linha));
+                if (linha.length < COLUNAS_MINIMAS) { continue; }
+
+                try {
+                    perguntas.add(montar(linha));
+                } catch (NumberFormatException e) {
+                    System.out.println("  >> Aviso: linha " + numeroDaLinha + " de " + caminho
+                            + " tem numero invalido, pulando essa pergunta.");
+                }
             }
         } catch (CsvValidationException e) {
             throw new IOException("CSV malformado: " + e.getMessage(), e);
